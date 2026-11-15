@@ -4,7 +4,6 @@ use macroquad::prelude::*;
 struct Player {
     position: Vec2,
     velocity: Vec2,
-
     radius: f32,
     health: f32,
 }
@@ -215,29 +214,25 @@ async fn main() {
 
         ball.calculate_velocity(&mut bullets, &mut enemies, shot.clone());
         ball.draw(&player_texture);
+
         if enemies.len() == 0 {
             level *= 2;
+            for _ in 1..=level {
+                let position = loop {
+                    let random_position =
+                        Vec2::new(rand::gen_range(50.0, 750.0), rand::gen_range(50.0, 550.0));
 
-            if enemies.len() == 0 {
-                level *= 2;
+                    if random_position.distance(ball.position) >= 300.0 {
+                        break random_position;
+                    }
+                };
 
-                for _ in 1..=level {
-                    let position = loop {
-                        let random_position =
-                            Vec2::new(rand::gen_range(50.0, 750.0), rand::gen_range(50.0, 550.0));
-
-                        if random_position.distance(ball.position) >= 300.0 {
-                            break random_position;
-                        }
-                    };
-
-                    enemies.push(Enemy {
-                        health: 100.0,
-                        position,
-                        velocity: Vec2::new(0.0, 0.0),
-                        speed: rand::gen_range(75.0, 200.0),
-                    });
-                }
+                enemies.push(Enemy {
+                    health: 100.0,
+                    position,
+                    velocity: Vec2::new(0.0, 0.0),
+                    speed: rand::gen_range(75.0, 200.0),
+                });
             }
         }
 
